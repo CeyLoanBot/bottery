@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 from telegram import (
     Update,
     InlineKeyboardMarkup,
@@ -13,16 +14,16 @@ from telegram.ext import (
     ContextTypes,
     filters,
 )
-from datasets import load_dataset, Dataset, DatasetDict
+from datasets import load_dataset, Dataset
 import huggingface_hub
 
-# ---------------- CONFIG ----------------
-BOT_TOKEN = "8424440635:AAEXJJNxb1kAXs3BI1cJSuh9kMloeS2TxYc"   # Replace with your bot token
-ADMIN_ID = 6651395416                     # Replace with your Telegram user ID
-LOG_CHANNEL_ID = -1003099533957           # Replace with your log channel ID
-HF_DATASET_REPO = "your-username/your-dataset-repo"  # Replace with your HF dataset repo
-HF_TOKEN = "your-huggingface-token"       # Replace with your HF token
-# ----------------------------------------
+# ---------------- CONFIG FROM ENVIRONMENT VARIABLES ----------------
+BOT_TOKEN = os.environ.get("BOT_TOKEN", "default-token-for-testing")
+ADMIN_ID = int(os.environ.get("ADMIN_ID", "6651395416"))
+LOG_CHANNEL_ID = int(os.environ.get("LOG_CHANNEL_ID", "-1003099533957"))
+HF_DATASET_REPO = os.environ.get("HF_DATASET_REPO", "your-username/your-dataset-repo")
+HF_TOKEN = os.environ.get("HF_TOKEN", "your-huggingface-token")
+# ------------------------------------------------------------------
 
 # Logging setup
 logging.basicConfig(
@@ -30,6 +31,10 @@ logging.basicConfig(
     level=logging.INFO,
 )
 logger = logging.getLogger(__name__)
+
+# Validate required environment variables
+if BOT_TOKEN == "default-token-for-testing" or HF_TOKEN == "your-huggingface-token":
+    logger.warning("Using default values for sensitive tokens. Please set environment variables properly.")
 
 # Initialize Hugging Face dataset with authentication
 try:
